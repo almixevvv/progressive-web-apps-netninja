@@ -66,26 +66,26 @@ self.addEventListener('activate', evt => {
 self.addEventListener('fetch', evt => {
   //console.log('fetch event', evt);
 
-  evt.respondWith(
-    caches.match(evt.request).then(cacheRes => {
-
-      //IF THE PAGE IS OLD, GET FROM CACHE. IF IT'S NEW THEN ADD NEW CACHE
-      return cacheRes || fetch(evt.request).then(fetchRes => {
-        return caches.open(dynamicAsset).then(cache => {
-
-          //PUT THE NEW PAGE TO CACHE AND DISPLAY THE CONTENT
-          cache.put(evt.request.url, fetchRes.clone());
-          limitCacheSize(dynamicAsset, 3);
-          return fetchRes;
-        })
-      });
-    }).catch(() => {
-      //ONLY RETURN THE FALLBACK PAGES, IF THE USER REQUESTED A PAGE
-      if(evt.request.url.indexOf('.html') > -1) {
-          return caches.match('pages/fallback.html');
-      }
-    })
-
-  );
+  // evt.respondWith(
+  //   caches.match(evt.request).then(cacheRes => {
+  //
+  //     //IF THE PAGE IS OLD, GET FROM CACHE. IF IT'S NEW THEN ADD NEW CACHE
+  //     return cacheRes || fetch(evt.request).then(fetchRes => {
+  //       return caches.open(dynamicAsset).then(cache => {
+  //
+  //         //PUT THE NEW PAGE TO CACHE AND DISPLAY THE CONTENT
+  //         cache.put(evt.request.url, fetchRes.clone());
+  //         limitCacheSize(dynamicAsset, 3);
+  //         return fetchRes;
+  //       })
+  //     });
+  //   }).catch(() => {
+  //     //ONLY RETURN THE FALLBACK PAGES, IF THE USER REQUESTED A PAGE
+  //     if(evt.request.url.indexOf('.html') > -1) {
+  //         return caches.match('pages/fallback.html');
+  //     }
+  //   })
+  //
+  // );
 
 });
