@@ -1,5 +1,5 @@
-const siteAsset = 'site-asset-v2';
-const dynamicAsset = 'site-dynamic-v1';
+const siteAsset = 'site-asset-v3';
+const dynamicAsset = 'site-dynamic-v2';
 
 const assets = [
   '/',
@@ -64,28 +64,31 @@ self.addEventListener('activate', evt => {
 
 // fetch event
 self.addEventListener('fetch', evt => {
-  //console.log('fetch event', evt);
 
-  // evt.respondWith(
-  //   caches.match(evt.request).then(cacheRes => {
-  //
-  //     //IF THE PAGE IS OLD, GET FROM CACHE. IF IT'S NEW THEN ADD NEW CACHE
-  //     return cacheRes || fetch(evt.request).then(fetchRes => {
-  //       return caches.open(dynamicAsset).then(cache => {
-  //
-  //         //PUT THE NEW PAGE TO CACHE AND DISPLAY THE CONTENT
-  //         cache.put(evt.request.url, fetchRes.clone());
-  //         limitCacheSize(dynamicAsset, 3);
-  //         return fetchRes;
-  //       })
-  //     });
-  //   }).catch(() => {
-  //     //ONLY RETURN THE FALLBACK PAGES, IF THE USER REQUESTED A PAGE
-  //     if(evt.request.url.indexOf('.html') > -1) {
-  //         return caches.match('pages/fallback.html');
-  //     }
-  //   })
-  //
-  // );
+  if(evt.request.url.indexOf('firestore.googleapis.com') === -1) {
+
+    //ONLY SAVE THE CACHE WHEN REQUEST IS NOT RELATED TO DATABASE
+    evt.respondWith(
+      caches.match(evt.request).then(cacheRes => {
+
+        //IF THE PAGE IS OLD, GET FROM CACHE. IF IT'S NEW THEN ADD NEW CACHE
+        return cacheRes || fetch(evt.request).then(fetchRes => {
+          return caches.open(dynamicAsset).then(cache => {
+
+            //PUT THE NEW PAGE TO CACHE AND DISPLAY THE CONTENT
+            cache.put(evt.request.url, fetchRes.clone());
+            limitCacheSize(dynamicAsset, 3);
+            return fetchRes;
+          })
+        });
+      }).catch(() => {
+        //ONLY RETURN THE FALLBACK PAGES, IF THE USER REQUESTED A PAGE
+        if(evt.request.url.indexOf('.html') > -1) {
+            return caches.match('pages/fallback.html');
+        }
+      })
+
+    );
+  }
 
 });
